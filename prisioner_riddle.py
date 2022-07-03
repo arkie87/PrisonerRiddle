@@ -1,38 +1,46 @@
 import random
 
 
-def get_boxes(N):
-    choices = [i for i in range(N)]
-    order = []
-    for i in range(N):
-        choice = random.choice(choices)
-        choices.pop(choices.index(choice))
-        order += [choice]
-    return order
+class Game:
+    def __init__(self, N):
+        self.N = N
+        self.guesses = N // 2
+        self.shuffle_boxes()
 
+    def shuffle_boxes(self):
+        boxes = list(range(self.N))
+        random.shuffle(boxes)
+        self.boxes = boxes
 
-def playone(i, boxes):
-    b = i
-    for j in range(len(boxes) // 2):
-        b = boxes[b]
-        if i == b:
-            return True
-    else:
-        return False
-
-
-def play(N):
-    boxes = get_boxes(N)
-    for i in range(N):
-        result = playone(i, boxes)
-        if not result:
+    def play_one(self, player):
+        box = player
+        for _ in range(self.guesses):
+            box = self.boxes[box]
+            if player == box:
+                return True
+        else:
             return False
-    else:
-        return True
+
+    def play(self):
+        for player in range(self.N):
+            result = self.play_one(player)
+            if not result:
+                return False
+        else:
+            return True
 
 
-s = 0
-for i in range(100000):
-    result = play(100)
-    if result:
-        s += 1
+def test():
+    s = 0
+    n = 100
+    N = 100000
+    for _ in range(N):
+        game = Game(n)
+        result = game.play()
+        if result:
+            s += 1
+
+    print(f"Success Rate: {round(s/N*100, 2)}%")
+
+
+test()
